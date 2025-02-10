@@ -68,18 +68,18 @@ class AIUser(
         }
 
         default_guild = {
-            "optin_by_default": False,
+            "optin_by_default": True,
             "optin_disable_embed": False,
             "reply_percent": DEFAULT_REPLY_PERCENT,
-            "messages_backread": 10,
-            "messages_backread_seconds": 60 * 120,
+            "messages_backread": 30,
+            "messages_backread_seconds": 60 * 10,
             "messages_min_length": DEFAULT_MIN_MESSAGE_LENGTH,
             "reply_to_mentions_replies": True,
-            "scan_images": False,
-            "scan_images_mode": ScanImageMode.AI_HORDE.value,
-            "scan_images_model": "gpt-4o",
+            "scan_images": True,
+            "scan_images_mode": ScanImageMode.LLM.value,
+            "scan_images_model": "google-ai-studio/gemini-2.0-flash",
             "max_image_size": DEFAULT_IMAGE_UPLOAD_LIMIT,
-            "model": "gpt-3.5-turbo",
+            "model": "google-ai-studio/gemini-2.0-flash",
             "custom_text_prompt": None,
             "channels_whitelist": [],
             "roles_whitelist": [],
@@ -266,7 +266,7 @@ class AIUser(
             return False
         if await self.bot.cog_disabled_in_guild(self, ctx.guild):
             return False
-        if ctx.author.bot or not self.channels_whitelist.get(ctx.guild.id, []):
+        if not self.channels_whitelist.get(ctx.guild.id, []):
             return False
 
         if not ctx.interaction and (isinstance(ctx.channel, discord.Thread) and ctx.channel.parent.id not in self.channels_whitelist[ctx.guild.id]):
@@ -285,9 +285,14 @@ class AIUser(
             return False
         if (ctx.author.id in await self.config.optout()):
             return False
+        optins = await self.config.optin()
         if (
             not self.optindefault.get(ctx.guild.id)
-            and (ctx.author.id not in await self.config.optin())
+            and (ctx.author.id not in optins)
+        ):
+            return False
+        if (
+            ctx.author.bot and (ctx.author.id not in optins)
         ):
             return False
         if self.ignore_regex.get(ctx.guild.id) and self.ignore_regex[ctx.guild.id].search(ctx.message.content):
