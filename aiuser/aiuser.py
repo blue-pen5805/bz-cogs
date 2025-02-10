@@ -229,7 +229,7 @@ class AIUser(
         if self.get_ratelimit(message) is not None and self.get_ratelimit2(message) is not None:
             return
         # Wait 0 ~ 30 seconds
-        await asyncio.sleep(random.randint(0, 30))
+        await asyncio.sleep(random.randint(0, 10))
 
         rate_limit_reset = datetime.strptime(await self.config.ratelimit_reset(), "%Y-%m-%d %H:%M:%S")
         if rate_limit_reset > datetime.now():
