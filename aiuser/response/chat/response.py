@@ -109,25 +109,27 @@ class ChatResponse():
         self.response = response
 
     async def is_reply(self):
-        if self.ctx.interaction:
-            return False
-
-        message = self.ctx.message
-        try:
-            await self.ctx.fetch_message(message.id)
-        except Exception:
-            return False
-
-        time_diff = datetime.now(timezone.utc) - message.created_at
-
-        if time_diff.total_seconds() > 8 or random.random() < 0.25:
-            return True
-
-        try:
-            async for last_message in message.channel.history(limit=1):
-                if last_message.author == message.guild.me:
-                    return True
-        except Exception:
-            pass
-
         return False
+
+        # if self.ctx.interaction:
+        #     return False
+
+        # message = self.ctx.message
+        # try:
+        #     await self.ctx.fetch_message(message.id)
+        # except Exception:
+        #     return False
+
+        # time_diff = datetime.now(timezone.utc) - message.created_at
+
+        # if time_diff.total_seconds() > 8 or random.random() < 0.25:
+        #     return True
+
+        # try:
+        #     async for last_message in message.channel.history(limit=1):
+        #         if last_message.author == message.guild.me:
+        #             return True
+        # except Exception:
+        #     pass
+
+        # return False
