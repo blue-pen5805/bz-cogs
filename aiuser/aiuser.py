@@ -55,6 +55,8 @@ class AIUser(
         self.ignore_regex: dict[int, re.Pattern] = {}
         self.override_prompt_start_time: dict[int, datetime] = {}
         self.cached_messages: Cache[int, MessageEntry] = Cache(limit=100)
+        self.cooldown = commands.CooldownMapping.from_cooldown(1, 10.0, commands.BucketType.channel)
+        self.cooldown2 = commands.CooldownMapping.from_cooldown(5, 60.0, commands.BucketType.channel)
 
         default_global = {
             "custom_openai_endpoint": None,
@@ -152,6 +154,14 @@ class AIUser(
             await self.openai_client.close()
         self.random_message_trigger.cancel()
 
+    def get_ratelimit(self, message: discord.Message) -> typing.Optional[int]:
+        bucket = self.cooldown.get_bucket(message)
+        return bucket.update_rate_limit()
+
+    def get_ratelimit2(self, message: discord.Message) -> typing.Optional[int]:
+        bucket = self.cooldown2.get_bucket(message)
+        return bucket.update_rate_limit()
+
     async def red_delete_data_for_user(self, *, requester, user_id: int):
         for guild in self.bot.guilds:
             member = guild.get_member(user_id)
@@ -214,6 +224,12 @@ class AIUser(
             pass
         elif random.random() > await self.get_percentage(ctx):
             return
+
+        # on_message rate limit
+        if self.get_ratelimit(message) is not None and self.get_ratelimit2(message) is not None:
+            return
+        # Wait 0 ~ 30 seconds
+        await asyncio.sleep(random.randint(0, 30))
 
         rate_limit_reset = datetime.strptime(await self.config.ratelimit_reset(), "%Y-%m-%d %H:%M:%S")
         if rate_limit_reset > datetime.now():
