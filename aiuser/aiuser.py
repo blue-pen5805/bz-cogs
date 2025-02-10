@@ -292,6 +292,10 @@ class AIUser(
         ):
             return False
         if (
+            ctx.author.id != self.bot.user.id
+        ):
+            return False
+        if (
             ctx.author.bot and (ctx.author.id not in optins)
         ):
             return False
