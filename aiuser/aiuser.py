@@ -156,7 +156,7 @@ class AIUser(
         self.random_message_trigger.cancel()
 
     def get_ratelimit1(self, message: discord.Message):
-        bucket = self.cooldown.get_bucket(message)
+        bucket = self.cooldown1.get_bucket(message)
         return bucket.update_rate_limit()
 
     def get_ratelimit2(self, message: discord.Message):
