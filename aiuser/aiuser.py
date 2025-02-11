@@ -56,8 +56,8 @@ class AIUser(
         self.override_prompt_start_time: dict[int, datetime] = {}
         self.cached_messages: Cache[int, MessageEntry] = Cache(limit=100)
         self.cooldown1 = commands.CooldownMapping.from_cooldown(2, 15.0, commands.BucketType.channel)
-        self.cooldown2 = commands.CooldownMapping.from_cooldown(3, 40.0, commands.BucketType.channel)
-        self.cooldown3 = commands.CooldownMapping.from_cooldown(7, 60.0, commands.BucketType.channel)
+        self.cooldown2 = commands.CooldownMapping.from_cooldown(3, 60.0, commands.BucketType.channel)
+        self.cooldown3 = commands.CooldownMapping.from_cooldown(10, 180.0, commands.BucketType.channel)
 
         default_global = {
             "custom_openai_endpoint": None,
