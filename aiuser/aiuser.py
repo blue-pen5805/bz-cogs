@@ -155,7 +155,7 @@ class AIUser(
             await self.openai_client.close()
         self.random_message_trigger.cancel()
 
-    def get_ratelimit(self, message: discord.Message):
+    def get_ratelimit1(self, message: discord.Message):
         bucket = self.cooldown.get_bucket(message)
         return bucket.update_rate_limit()
 
