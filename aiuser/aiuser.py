@@ -228,18 +228,18 @@ class AIUser(
         if await self.is_bot_mentioned_or_replied(message) or await self.is_in_conversation(ctx):
             pass
         elif random.random() > await self.get_percentage(ctx):
-            # on_message rate limit
-            if (
-                self.get_ratelimit1(message) is not None
-                or self.get_ratelimit2(message) is not None
-                or self.get_ratelimit3(message) is not None
-            ):
-                return
-
-            # Wait seconds
-            await asyncio.sleep(random.randint(3, 15))
-
             return
+
+        # on_message rate limit
+        if (
+            self.get_ratelimit1(message) is not None
+            or self.get_ratelimit2(message) is not None
+            or self.get_ratelimit3(message) is not None
+        ):
+            return
+
+        # Wait seconds
+        await asyncio.sleep(random.randint(3, 15))
 
         rate_limit_reset = datetime.strptime(await self.config.ratelimit_reset(), "%Y-%m-%d %H:%M:%S")
         if rate_limit_reset > datetime.now():
